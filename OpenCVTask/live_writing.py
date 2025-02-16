@@ -6,33 +6,7 @@ import torch.nn.functional as F
 
 sys.path.append('/Users/hanafahim/Desktop/repos/mrm/cnn')
 from model import MNISTModel
-def preprocess_digit(img):
-    # Ensure the image has 3 channels before converting to grayscale
-    if len(img.shape) == 3:
-        gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    else:
-        gray = img  # Already grayscale
 
-    # Apply thresholding to get a binary image
-    _, binary = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY_INV)
-
-    # Find contours to detect digit's bounding box
-    contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-    if len(contours) == 0:
-        return None  # No digit detected
-
-    # Get bounding box around the digit
-    x, y, w, h = cv2.boundingRect(contours[0])
-    digit_roi = binary[y:y+h, x:x+w]
-
-    # Resize to 20x20 while maintaining aspect ratio
-    digit_resized = cv2.resize(digit_roi, (20, 20), interpolation=cv2.INTER_AREA)
-
-    # Pad to 28x28
-    padded = np.pad(digit_resized, ((4, 4), (4, 4)), mode="constant", constant_values=0)
-
-    return padded
 
 # Load trained CNN model
 model = MNISTModel(1, 10, 10)
